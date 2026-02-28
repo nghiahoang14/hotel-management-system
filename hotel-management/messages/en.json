@@ -1,0 +1,140 @@
+{
+  "dining": {
+    "description": "Explore the rich culinary world at Hanoi Hotel, where our restaurants serve a variety of Cantonese, Hong Kong dishes, and especially the renowned Dimsum. Come and enjoy the unique flavors of culinary masterpieces in an elegant space in the heart of the capital.",
+    "title": "Dining\n"
+  }
+  ,
+  "footer": {
+    "consultTitle": "Need consultation?",
+    "consultDescription": "Please share your thoughts with us. Don’t forget to leave your contact information in the form beside!",
+    "form": {
+      "name": "Full name",
+      "phone": "Phone number",
+      "email": "Email",
+      "message": "Message",
+      "submit": "Send",
+      "success": "We will contact you soon",
+      "failed": "Failed to send. Please try again later.",
+      "sending": "Sending..."
+    },
+    "explore": {
+      "title": "Explore",
+      "home": "Home",
+      "rooms": "Rooms",
+      "dining": "Dining",
+      "meetings": "Meetings & Events",
+      "contact": "Contact",
+      "gallery": "Gallery",
+      "news": "News",
+      "offers": "Offers"
+    },
+    "address": {
+      "title": "Address",
+      "location": "D8 Giang Vo, Giang Vo Ward, Hanoi",
+      "phone": "(+84) 24 3845 2270",
+      "mobile": "(+84) 88 856 0126",
+      "email": "sales@hanoihotel.com.vn"
+    },
+    "copyright": "© 2024 HANOI HOTEL. All rights reserved.",
+    "terms": "Terms",
+    "privacy": "Privacy & Cookie Policy"
+  },
+  
+  "contact": {
+    "metaTitle": "Contact - Hanoi Hotel",
+
+    "addressTitle": "Address",
+    "addressText": "D8 Giang Vo, Giang Vo Ward\nHanoi, Vietnam",
+
+    "contactInfoTitle": "Contact Information",
+
+    "followUsTitle": "Follow us on",
+
+    "formTitle": "Contact Us",
+    "formDesc1": "We are always ready to listen to your feedback.",
+    "formDesc2": "Let us assist you and answer all your questions.",
+
+    "lastName": "Last Name",
+    "firstName": "First Name",
+    "phone": "Phone Number",
+    "email": "Email",
+
+    "privacyText": "I agree to the Privacy Policy and Terms & Conditions when submitting this form.",
+
+    "submit": "Send",
+    "Sending": "Sending...",
+    "success": "We will get back to you soon",
+    "failed": "Failed to send. Please try again later."
+  },
+  "gallery":{
+  "gallery":"Gallery",
+  "title":"Explore a visual journey of elegance, comfort, and timeless beauty."
+},
+"conference":{
+    "title":"Host your events in sophisticated spaces, where impeccable service and sophistication converge.",
+    "pageTitle": "Meetings & Events",
+  "description": "Hanoi Hotel offers conference and meeting room facilities that can accommodate up to 100 guests. Each room has contemporary equipment, and our dedicated staff is ready to serve you – whether you are holding an important business conference, a wedding party, or a festive family banquet",
+  "equipmentTitle": "Equipments",
+  "equipments": [
+   " LCD Projector",
+"LCD TV & DVD",
+"Large screen with a laser pointer",
+"Broadband Internet",
+"Whiteboard with pen",
+"Flipchart & Marker",
+"Notebook Computer",
+"Microphones System",
+"Podium & Backdrop",
+"Notepads & Pens"
+  ]
+},
+"offer":{
+    
+  "title":"Discover exclusive experiences that elevate your stay with unmatched opulent and exceptional value.",
+  "titlePage": "Special Offers",
+  "subtitlePage": "Can we surprise you?",
+  "description": "Situated in the capital’s central district, Hanoi Hotel offers contemporary and elegant accommodations by the peaceful Giang Vo Lake, featuring diverse room types to suit various demands of travel purposes. Experience a range of attractive offerings at Hanoi Hotel!"
+
+
+
+},
+"menu":{
+  "home":"Home",
+  "accommodations":"Accommodation",
+  "dining":"Dining",
+  "offer":"Offers",
+"facilities":"Facilities",
+"meetings":"Meetings & Events ",
+"gallery":"Gallery",
+"contact":"Contact"
+},
+"facilities": {
+    "title": "Facilities",
+    "description": "Hanoi Hotel provides exceptional facilities to make your stay unforgettable. Stay fit in our modern gym, relax with rejuvenating spa treatments, and indulge in delicious cuisine at our on-site restaurant. Host events in versatile spaces, access business support, and enjoy 24/7 concierge services, complimentary Wi-Fi, and convenient airport transfers, ensuring comfort and convenience throughout your visit.",
+    "buttonText": "View More"
+  },
+ "bookingForm": {
+    "checkIn": "Check-in *",
+    "checkOut": "Check-out *",
+    "adults": "Adults *",
+    "children": "Children",
+    "submit": "Book Now"
+ 
+  },
+  "booking":{
+  "submit": "Book Now"
+},
+"overview":{
+  "title":"Welcome to Hanoi Hotel",
+  "description":"Hanoi Hotel has a great heritage of being the first international hotel in Hanoi. With 218 rooms and suites overlooking the scenic Giang Vo Lake, the centrally-located hotel is the perfect place for business or leisure purposes. Luxurious accommodations are elegantly furnished and equipped with a wide range of high-end amenities. Hanoi Hotel is renowned for its comprehensive evening entertainment range and the city’s finest Cantonese cuisine. Hanoi Hotel guarantees that your stay here will be pleasant and memorable."
+
+},
+"follow":{
+"title":"Follow us on Instagram"
+},
+"feedback":{
+  "title":"Guest's Feedback"
+}
+
+
+}

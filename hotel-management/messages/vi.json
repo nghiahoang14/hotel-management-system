@@ -1,0 +1,143 @@
+{
+  "dining": {
+    "description": "Khám phá thế giới ẩm thực phong phú tại khách sạn Hà Nội, nơi những nhà hàng của chúng tôi phục vụ đa dạng các món ăn Quảng Đông, Hồng Kông và đặc biệt là những xửng Dimsum trứ danh. Hãy cùng thưởng thức hương vị độc đáo của những tinh hoa ẩm thực trong không gian tinh tế giữa lòng thủ đô.",
+    "title": "Ẩm thực\n"
+  },
+  
+  "footer": {
+    "consultTitle": "Bạn cần tư vấn?",
+    "consultDescription": "Hãy chia sẻ ý kiến của bạn với chúng tôi. Đừng quên để lại thông tin liên lạc của bạn ở biểu mẫu bên cạnh nhé!",
+    "form": {
+      "name": "Họ và tên",
+      "phone": "Số điện thoại",
+      "email": "Email",
+      "message": "Lời nhắn",
+      "submit": "Gửi",
+      "success": "Chúng tôi sẽ liên hệ với bạn sớm",
+      "failed": "Gửi thất bại. Vui lòng thử lại sau.",
+      "sending": "Đang gửi..."
+    },
+    "explore": {
+      "title": "Khám Phá",
+      "home": "Trang chủ",
+      "rooms": "Loại phòng",
+      "dining": "Ẩm thực",
+      "meetings": "Họp & Sự kiện",
+      "contact": "Liên hệ",
+      "gallery": "Thư viện",
+      "news": "Tin tức",
+      "offers": "Ưu đãi"
+    },
+    "address": {
+      "title": "Địa Chỉ",
+      "location": "D8 Giảng Võ, Phường Giảng Võ, Hà Nội",
+      "phone": "(+84) 24 3845 2270",
+      "mobile": "(+84) 88 856 0126",
+      "email": "sales@hanoihotel.com.vn"
+    },
+    
+    "copyright": "© 2024 HANOI HOTEL. All rights reserved.",
+    "terms": "Điều khoản",
+    "privacy": "Chính sách Bảo mật và Cookie"
+  },
+  
+  "contact": {
+    "metaTitle": "Liên hệ - Hanoi Hotel",
+
+    "addressTitle": "Địa chỉ",
+    "addressText": "D8 Giảng Võ, Phường Giảng Võ\nHà Nội, Việt Nam",
+
+    "contactInfoTitle": "Thông tin liên hệ",
+
+    "followUsTitle": "Theo dõi chúng tôi tại",
+
+    "formTitle": "Liên hệ với chúng tôi",
+    "formDesc1": "Chúng tôi luôn sẵn lòng lắng nghe ý kiến từ bạn.",
+    "formDesc2": "Hãy để chúng tôi hỗ trợ và giải đáp mọi thắc mắc mà bạn có.",
+
+    "lastName": "Họ",
+    "firstName": "Tên",
+    "phone": "Số điện thoại",
+    "email": "Email",
+
+    "privacyText": "Tôi đồng ý với Chính sách Bảo mật và Điều khoản & Điều kiện khi gửi biểu mẫu này.",
+
+    "submit": "Gửi",
+     "sending": "Đang gửi...",
+     "success": "Chúng tôi sẽ liên hệ với bạn sớm",
+     "failed": "Gửi thất bại. Vui lòng thử lại sau."
+
+},
+"gallery":{
+  "gallery":"Thư viện",
+   "title":"Chiêm ngưỡng vẻ đẹp mê hoặc với những mỹ vị hấp dẫn và phòng nghỉ sang trọng."
+},
+"conference":{
+  "title":"Không gian tổ chức sự kiện tinh tế và đẳng cấp dành cho những sự kiện quan trọng.",
+  "pageTitle": "Phòng họp & Hội nghị",
+  "description": "Khách sạn Hà Nội có Hội trường/ Phòng họp có sức chứa từ 10 đến 100 khách. Mỗi phòng đều được trang bị thiết bị hiện đại và đội ngũ nhân viên tận tâm của chúng tôi sẵn sàng phục vụ bạn cho dù bạn đang tổ chức một hội nghị kinh doanh quan trọng, tiệc cưới hay tiệc gia đình trọng thể.",
+  "equipmentTitle": "Trang thiết bị",
+  "equipments": [
+    "Máy chiếu LCD",
+    "LCD TV & DVD",
+    "Màn hình lớn với con trỏ laser",
+    "Internet băng thông rộng",
+    "Bảng trắng với bút",
+    "Bảng lật & Bút đánh dấu",
+    "Máy tính xách tay",
+    "Hệ thống micro",
+    "Bục & Backdrop",
+    "Miếng dán và bút ghi chú"
+  ]
+},
+"offer":{
+  "title":"Khám phá những ưu đãi độc quyền, nâng tầm trải nghiệm ẩm thực và nghỉ dưỡng.",
+  "titlePage": "Ưu đãi đặc biệt",
+  "subtitlePage": "Bất ngờ gì đang chờ đợi bạn?",
+  "description": "Tọa lạc tại khu vực trung tâm thủ đô, Khách sạn Hà Nội mang đến không gian lưu trú tiện nghi và sang trọng bên hồ Giảng Võ yên bình với nhiều hạng phòng đa dạng, đáp ứng mọi nhu cầu của Quý khách, dù là trong kỳ nghỉ dưỡng hay chuyến công tác dài ngày. Hãy đến và trải nghiệm những dịch vụ hấp dẫn tại khách sạn Hà Nội!"
+
+
+},
+"menu":{
+  "home":"Trang chủ",
+  "accommodations":"Hạng phòng",
+  "dining":"Ẩm thực",
+  "offer":"Ưu đãi",
+"facilities":"tiện ích",
+"meetings":"Họp & Sự kiện ",
+"gallery":"Thư viện",
+"contact":"Liên hệ"
+},
+
+  "facilities": {
+    "title": "Các tiện nghi",
+    "description": "Khách sạn Hà Nội mang đến những tiện nghi đẳng cấp nhằm tạo nên một kỳ nghỉ đáng nhớ cho Quý khách. Rèn luyện sức khỏe tại phòng gym hiện đại, thư giãn với các liệu pháp spa và tận hưởng ẩm thực tinh tế tại nhà hàng trong khuôn viên khách sạn. Chúng tôi cung cấp không gian linh hoạt cho các sự kiện, dịch vụ hỗ trợ thông tin cùng lễ tân 24/7, Wi-Fi miễn phí và đưa đón sân bay thuận tiện, đảm bảo sự thoải mái và tiện nghi trọn vẹn trong suốt thời gian lưu trú của Quý khách.",
+   "buttonText": "Xem thêm"
+  },
+  
+  "bookingForm": {
+    "checkIn": "Nhận phòng *",
+    "checkOut": "Trả phòng *",
+    "adults": "Người lớn *",
+    "children": "Trẻ em",
+    "submit": "Đặt phòng"
+ 
+  },
+
+"booking":{
+  "submit": "Đặt phòng"
+},
+"overview":{
+  "title":"Chào mừng Quý khách đến với Khách sạn Hà Nội",
+  "description":"Khách sạn Hà Nội là khách sạn Quốc tế đầu tiên tại Hà Nội với 218 phòng nghỉ tiện nghi, hiện đại và sang trọng. Đặc biệt, sở hữu vị trí trung tâm bên Hồ Giảng Võ thanh bình, kết nối thuận tiện với các văn phòng chính phủ, đại sứ quán, khu thương mại sầm suất, nhà hàng,… Khách sạn là điểm dừng chân lý tưởng cho du khách trong và ngoài nước mỗi khi có chuyến công tác hay du lịch cùng bạn bè và người thân. Bên cạnh đó, Khách sạn Hà Nội nổi tiếng là địa chỉ hàng đầu về ẩm thực Trung Hoa cùng các dịch vụ giải trí phong phú, hy vọng sẽ đem lại cho Quý khách những trải nghiệm thú vị và hài lòng nhất."
+
+}
+,
+"follow":{
+"title":"Theo dõi chúng tôi trên Instagram"
+},
+"feedback":{
+  "title":"Phản hồi của khách hàng"
+}
+
+}
