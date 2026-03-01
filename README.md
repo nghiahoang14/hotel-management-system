@@ -22,6 +22,12 @@ npm run start:dev
 
 ### Frontend
 npm run dev  
+### UI web
+<img width="1366" height="641" alt="image" src="https://github.com/user-attachments/assets/4d75ad4b-d353-461a-8539-014d741fbe07" />
+### UI admin dashboard
+<img width="1366" height="637" alt="image" src="https://github.com/user-attachments/assets/2f64aa79-eb84-4e8f-8a7f-44612a3cbee9" />
+
+
 ## Technologies
 
 ### Frontend
