@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 
 import { rooms } from "@/src/apis/room.data";
@@ -10,19 +11,17 @@ import { RoomType } from "@/types/roomType";
 
 
 
-type Props = {
-  params: { slug:string; locale: string };
-};
-export default async function Page({ params }: Props) {
+
+export default async function Page({ params }: any) {
   
-  const resolvedParams = await params;
-
+  
+const { slug: AccommodationSlug, locale } = params;
  
-  const AccommodationSlug = resolvedParams.slug;
-
-  const locale = resolvedParams.locale;
-  const roomTypes = await getRoomTypes();
-  const accommodation = await getRoomTypeBySlug(AccommodationSlug);
+  
+const [roomTypes, accommodation] = await Promise.all([
+    getRoomTypes(),
+    getRoomTypeBySlug(AccommodationSlug),
+  ]);
   const recentAccommodations=roomTypes.filter((o:RoomType) => o._id !== accommodation?._id);
   return (
     <>

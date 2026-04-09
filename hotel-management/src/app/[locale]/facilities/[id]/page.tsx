@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 
 
@@ -7,16 +8,14 @@ import { Header } from "@/src/components/client/layouts/Header";
 import { getFacilities, getFacilityById } from "@/src/services/api/client/facilities.api";
 
 
-type Props = {
-  params: { id: string; locale: string };
-};
-export default async function FacilitiesDetailPage({ params }: Props) {
-  const resolvedParams = await params;
 
-  const FacilityId = resolvedParams.id;
-  const locale = resolvedParams.locale;
-  const facility= await getFacilityById(FacilityId);
-  const facilities= await getFacilities();
+export default async function FacilitiesDetailPage({ params }: any) {
+ 
+const { id: FacilityId, locale } = params;
+  const [facilities, facility] = await Promise.all([
+      getFacilities(),
+      getFacilityById(FacilityId),
+    ]);
 console.log(facilities);
   return (
     <>

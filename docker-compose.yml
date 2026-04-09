@@ -1,0 +1,41 @@
+version: "3.9"
+
+services:
+  backend:
+    container_name: hotel-management-be
+    image: hotel-management-be
+    build:
+      context: ./hotel-management-be
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - MONGO_URI=mongodb://admin:admin123@mongo:27017/hotel-management?authSource=admin
+    depends_on:
+      - mongo
+
+  frontend:
+    container_name: hotel-management-fe
+    image: hotel-management-fe
+    build:
+      context: ./hotel-management
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+  mongo:
+    container_name: hotel-management-mongo
+    image: mongo:6
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin123
+      MONGO_INITDB_DATABASE: hotel-management
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:

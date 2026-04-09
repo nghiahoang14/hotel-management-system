@@ -3,34 +3,40 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 @Schema({ timestamps: true })
 export class RoomType {
   @Prop({ required: true, unique: true })
-  name: string;
+  name!: string;
 
   @Prop({ required: true, unique: true, sparse: true })
-  slug: string;
+  slug!: string;
 
   @Prop()
-  description: string;
+  description!: string;
 
   @Prop({ required: true })
-  price: number;
+  price!: number;
 
   @Prop()
-  size: string;
+  size!: string;
 
   @Prop()
-  bed: string;
+  bed!: string;
 
   @Prop()
-  view: string;
+  view!: string;
 
   @Prop()
-  people: string;
+  maxAdults?: number;
+
+  @Prop()
+  maxChildren?: number;
+
+  @Prop({ required: true })
+  maxPeople!: number;
 
   @Prop({ type: [String], default: [] })
-  amenities: string[];
+  amenities!: string[];
 
   @Prop({ type: [String], default: [] })
-  images: string[];
+  images!: string[];
 }
 
 export const RoomTypeSchema = SchemaFactory.createForClass(RoomType);

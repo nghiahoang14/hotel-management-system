@@ -1,4 +1,5 @@
 "use client";
+import { renderPeople } from "@/src/helper/renderPeople";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -61,7 +62,7 @@ export const RoomTypeCard = ({
         <h3 className="text-xl font-semibold">{roomType.name}</h3>
 
         <p className="text-sm text-gray-500 mb-2">
-          Tối đa : {roomType.people}
+          Tối đa : {renderPeople(roomType)} 
         </p>
 
         <p className="text-sm line-clamp-2 mb-3">

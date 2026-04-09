@@ -2,14 +2,14 @@
 
 import { createMessage } from "@/src/services/api/client/message.api";
 import { Mail, MapPin, Phone, Smartphone } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
 export const Footer = () => {
   const t = useTranslations("footer");
-
+  const locale=useLocale();
   const [form, setForm] = useState({
     name: "",
     phone: "",
@@ -141,16 +141,16 @@ export const Footer = () => {
             </h4>
             <div className="flex gap-[100px] text-[#ffffffad]">
               <ul className="space-y-3">
-                <li><Link href="/">{t("explore.home")}</Link></li>
-                <li><Link href="/rooms">{t("explore.rooms")}</Link></li>
-                <li><Link href="/dining">{t("explore.dining")}</Link></li>
-                <li><Link href="/meetings-events">{t("explore.meetings")}</Link></li>
+                <li><Link href={`/${locale}/`}>{t("explore.home")}</Link></li>
+                <li><Link href={`/${locale}/rooms`}>{t("explore.rooms")}</Link></li>
+                <li><Link href={`/${locale}/dining`}>{t("explore.dining")}</Link></li>
+                <li><Link href={`/${locale}/meetings-events`}>{t("explore.meetings")}</Link></li>
               </ul>
               <ul className="space-y-3">
-                <li><Link href="/contact">{t("explore.contact")}</Link></li>
-                <li><Link href="/gallery">{t("explore.gallery")}</Link></li>
-                <li><Link href="/news">{t("explore.news")}</Link></li>
-                <li><Link href="/offers">{t("explore.offers")}</Link></li>
+                <li><Link href={`/${locale}/contact`}>{t("explore.contact")}</Link></li>
+                <li><Link href={`/${locale}/gallery`}>{t("explore.gallery")}</Link></li>
+                <li><Link href={`/${locale}/news`}>{t("explore.news")}</Link></li>
+                <li><Link href={`/${locale}/offers`}>{t("explore.offers")}</Link></li>
               </ul>
             </div>
           </div>

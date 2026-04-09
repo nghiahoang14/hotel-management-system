@@ -11,6 +11,7 @@ import BaseSwiper from "../Swiper/BaseSwiper";
 import { RoomType } from "@/types/roomType";
 import { getRoomTypes } from "@/src/services/api/client/roomType.api";
 import { useLocale } from "next-intl";
+import { renderPeople } from "@/src/helper/renderPeople";
 
 export const RoomSection = () => {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -59,7 +60,7 @@ export const RoomSection = () => {
             </li>
             <li className="my-3 flex items-center  gap-4">
               <img src="/people.svg" className="w-[32px] invert brightness-0" />{" "}
-              {room?.people}
+              {renderPeople(room)}
             </li>
             <li className="my-3 flex items-center  gap-4">
               <img src="/area.svg" className="w-[32px] invert brightness-0" />{" "}

@@ -7,6 +7,7 @@ import {
   IsUrl,
   Min,
   ArrayNotEmpty,
+  IsInt,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -36,9 +37,22 @@ export class CreateRoomTypeDto {
   @IsOptional()
   view?: string;
 
-  @IsString()
+  @IsInt()
+  @Type(() => Number)
+  @Min(0)
+  maxPeople?: number;
+
   @IsOptional()
-  people?: string;
+  @IsInt()
+  @Type(() => Number)
+  @Min(0)
+  maxAdults?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Type(() => Number)
+  @Min(0)
+  maxChildren?: number;
 
   @IsArray()
   @IsString({ each: true })

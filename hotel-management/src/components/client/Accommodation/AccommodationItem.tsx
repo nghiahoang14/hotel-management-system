@@ -3,6 +3,7 @@ import Image from "next/image";
 import { LinkToPage } from "../Link/LinkToPage";
 
 import { useParams } from "next/navigation";
+import { renderPeople } from "@/src/helper/renderPeople";
 
 interface Props {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -37,7 +38,7 @@ export const AccommodationItem=({ room, reverse }: Props)=>{
           {room.name}
         </h3>
         <p className="text-[24px] font-[200] mb-1">
-          {room.people} / {room.size}
+            {renderPeople(room)} / {room.size}
         </p>
 
         <div className="w-15 h-[3px] bg-[#a18348] my-4" />

@@ -4,10 +4,10 @@ import { Types } from 'mongoose';
 @Schema({ timestamps: true })
 export class Booking {
   @Prop()
-  checkIn: Date;
+  checkIn!: Date;
 
   @Prop()
-  checkOut: Date;
+  checkOut!: Date;
 
   @Prop([
     {
@@ -18,18 +18,28 @@ export class Booking {
       subtotal: Number,
     },
   ])
-  items: any[];
+  items!: any[];
 
   @Prop()
-  nights: number;
+  nights!: number;
 
   @Prop()
-  totalPrice: number;
+  totalPrice!: number;
 
   @Prop({ default: 'pending' })
-  status: string;
+  status!: string;
 
-  @Prop()
-  guestInfo: any;
+  @Prop({
+    type: {
+      fullName: String,
+      phone: String,
+      email: String,
+    },
+  })
+  guestInfo!: {
+    fullName: string;
+    phone: string;
+    email: string;
+  };
 }
 export const BookingSchema = SchemaFactory.createForClass(Booking);

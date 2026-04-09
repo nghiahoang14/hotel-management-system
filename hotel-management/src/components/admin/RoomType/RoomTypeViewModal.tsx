@@ -4,6 +4,7 @@ import Image from "next/image";
 import { X } from "lucide-react";
 import { RoomType } from "@/types/roomType";
 import {useState} from "react";
+import { renderPeople } from "@/src/helper/renderPeople";
 
 
 type Props = {
@@ -14,7 +15,6 @@ type Props = {
 
 export const RoomTypeViewModal = ({ open, data, onClose }: Props) => {
     const [activeImage, setActiveImage] = useState(0);
-
   if (!open || !data) return null;
 
 
@@ -43,7 +43,7 @@ export const RoomTypeViewModal = ({ open, data, onClose }: Props) => {
           <Info label="Size" value={data.size} />
           <Info label="Bed" value={data.bed} />
           <Info label="View" value={data.view} />
-          <Info label="People" value={data.people} />
+          <Info label="People" value={renderPeople(data)} />
         </div>
 
         {/* DESCRIPTION */}

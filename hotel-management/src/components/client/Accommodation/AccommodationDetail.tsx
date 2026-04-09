@@ -4,11 +4,12 @@ import { useParams } from "next/navigation";
 import CardItem from "../Card/CardItem";
 import BaseSwiper from "../Swiper/BaseSwiper";
 import { rooms } from "@/src/apis/room.data";
-import BookingForm from "../BookingForm/BookingForm";
 import Image from "next/image";
 import Link from "next/link";
 import fillSlides from "@/src/helper/fillSlide";
 import { RoomType } from "@/types/roomType";
+import { renderPeople } from "@/src/helper/renderPeople";
+import BookingSearch from "../Booking/BookingSearch";
 type Props = {
   
   accommodation:RoomType | undefined;
@@ -32,7 +33,7 @@ export const AccommodationDetail = ({  accommodation, recentAccommodations }: Pr
         {/* PEOPLE */}
         <div className="flex items-center gap-4 my-6 justify-center">
         <img src="/people.svg" className="w-[32px]  text-[#a18348]" />{" "}
-        <p className="text-[16px] tracking-wide">{accommodation?.people}</p>
+        <p className="text-[16px] tracking-wide"> {renderPeople(accommodation)}</p>
         </div>
 
         {/* SIZE */}
@@ -72,7 +73,7 @@ export const AccommodationDetail = ({  accommodation, recentAccommodations }: Pr
           </p>
 
           <Link
-            href="#"
+            href={`/${locale}/booking?roomTypeId=${accommodation?._id.toString()}`}
             className="inline-block text-[16px] uppercase tracking-wide
                                 text-[#A18348] border-y border-[#A18348]
                                 px-6 py-3 hover:bg-[#A18348] hover:text-white transition-colors"
@@ -140,7 +141,7 @@ export const AccommodationDetail = ({  accommodation, recentAccommodations }: Pr
           <p className="text-[46px] font-gothic font-extralight leading-0.5 mb-16">
             Thời gian nhận phòng của bạn?
           </p>
-          <BookingForm isRoomDetail />
+          <BookingSearch isRoomDetail  variant="hero"/>
         </div>
         {/* view more */}
         <div>
@@ -166,7 +167,7 @@ export const AccommodationDetail = ({  accommodation, recentAccommodations }: Pr
                 image={item.images[0]}
                 title={item.name}
                 description={item.description}
-                people={item.people}
+                people={renderPeople(item)}
                 size={item.size}
                 href={`/${locale}/accommodation/${item.slug}`}
               />

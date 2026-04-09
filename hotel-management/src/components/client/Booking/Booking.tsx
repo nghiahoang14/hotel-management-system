@@ -1,33 +1,15 @@
 "use client";
 
-import { useState } from "react";
-import { BookingSearchBar } from "@/src/components/client/Booking/BookingSearchBar";
+import { useEffect, useState } from "react";
 import { RoomTypeCard } from "@/src/components/client/Booking/RoomTypeCard";
 import { BookingSummary } from "@/src/components/client/Booking/BookingSummary";
+import { searchAvailableRooms } from "@/src/services/api/client/booking.api";
+import BookingSearch, { People } from "./BookingSearch";
+import { useSearchParams } from "next/dist/client/components/navigation";
+import { RoomType } from "@/types/roomType";
 
-interface RoomType {
-  _id: string;
-  name: string;
-  price: number;
-  images: string[];
-  people: number;
-}
 
-interface PeopleRoom {
-  adults: number;
-  children: number;
-  childrenAges: number[];
-}
-
-interface People {
-  rooms: PeopleRoom[];
-}
-
-export default function Booking({
-  roomTypes,
-}: {
-  roomTypes: RoomType[];
-}) {
+export default function Booking() {
   /* ===== STATE ===== */
 
   const [arrival, setArrival] = useState("");
@@ -39,20 +21,45 @@ export default function Booking({
 
   const [selected, setSelected] = useState<Record<string, number>>({});
   const [searched, setSearched] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [availableRoomTypes, setAvailableRoomTypes] = useState<RoomType[]>([]);
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    const checkIn = searchParams.get("checkIn");
+    const checkOut = searchParams.get("checkOut");
+    const adults = Number(searchParams.get("adults") || 1);
+    const children = Number(searchParams.get("children") || 0);
+    const roomTypeId = searchParams.get("roomTypeId") || undefined;
 
+    if (!checkIn || !checkOut) return;
+
+    handleSearch({
+      arrival: checkIn,
+      departure: checkOut,
+      people: {
+        rooms: [
+          {
+            adults,
+            children,
+            childrenAges: Array(children).fill(1),
+          },
+        ],
+      },
+      roomTypeId:roomTypeId
+    });
+  }, []);
   /* ===== HELPERS ===== */
 
   const nights =
     arrival && departure
       ? Math.max(
           1,
-          (new Date(departure).getTime() -
-            new Date(arrival).getTime()) /
-            (1000 * 60 * 60 * 24)
+          (new Date(departure).getTime() - new Date(arrival).getTime()) /
+            (1000 * 60 * 60 * 24),
         )
       : 1;
 
-  const selectedRoomTypes = roomTypes
+  const selectedRoomTypes = availableRoomTypes
     .filter((r) => selected[r._id] > 0)
     .map((r) => ({
       ...r,
@@ -61,22 +68,43 @@ export default function Booking({
 
   /* ===== HANDLERS ===== */
 
-  const handleSearch = ({
+  const handleSearch = async ({
     arrival,
     departure,
     people,
+    roomTypeId,
   }: {
     arrival: string;
     departure: string;
     people: People;
+    roomTypeId?: string;
   }) => {
     setArrival(arrival);
     setDeparture(departure);
     setPeople(people);
     setSearched(true);
-
-    // reset selection mỗi lần search
     setSelected({});
+    setLoading(true);
+
+    const totalAdults = people.rooms.reduce((s, r) => s + r.adults, 0);
+    const totalChildren = people.rooms.reduce((s, r) => s + r.children, 0);
+
+    try {
+      const data = await searchAvailableRooms({
+        checkIn: arrival,
+        checkOut: departure,
+        adults: totalAdults,
+        children: totalChildren,
+        roomTypeId,
+      });
+
+      setAvailableRoomTypes(data);
+    } catch (error) {
+      console.error(error);
+      setAvailableRoomTypes([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const updateQty = (roomType: RoomType, qty: number) => {
@@ -90,8 +118,8 @@ export default function Booking({
 
   return (
     <>
-      {/* SEARCH BAR */}
-      <BookingSearchBar
+      <BookingSearch
+        variant="page"
         arrival={arrival}
         departure={departure}
         people={people}
@@ -107,27 +135,30 @@ export default function Booking({
             </p>
           )}
 
+          {searched && loading && (
+            <p className="text-gray-500">Đang tìm phòng...</p>
+          )}
+
+          {searched && !loading && availableRoomTypes.length === 0 && (
+            <p className="text-red-500">Không còn phòng trong thời gian này</p>
+          )}
+
           {searched &&
-            roomTypes.map((rt) => (
+            !loading &&
+            availableRoomTypes.map((rt) => (
               <RoomTypeCard
                 key={rt._id}
                 roomType={rt}
-                available={rt.people} 
-                // 👆 tạm dùng people làm mock availability
+                available={rt.available}
                 selectedQty={selected[rt._id] || 0}
-                onChangeQty={(qty: number) =>
-                  updateQty(rt, qty)
-                }
+                onChangeQty={(qty: number) => updateQty(rt, qty)}
               />
             ))}
         </div>
 
         {/* RIGHT */}
         <div className="col-span-4">
-          <BookingSummary
-            selections={selectedRoomTypes}
-            nights={nights}
-          />
+          <BookingSummary selections={selectedRoomTypes} nights={nights} />
         </div>
       </div>
     </>

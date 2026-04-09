@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Navbar from "../Navbar/Navbar";
-import BookingForm from "../BookingForm/BookingForm";
 import Social from "../Social/Social";
 import ScrollToTop from "../ScrollToTop/ScrollToTop";
 import HeaderBackground from "./HeaderBackground";
+import BookingSearch from "../Booking/BookingSearch";
 
 interface HeaderProps {
   images: string[];
@@ -61,7 +61,7 @@ useEffect(() => {
         
  {bookingForm && (
           <>
-        <BookingForm />
+        <BookingSearch variant="hero" />
         </>
         )}
         <Social />

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { Header } from "@/src/components/client/layouts/Header";
 import { formatDate } from "@/src/helper/formatDate";
@@ -6,14 +7,11 @@ import { Offer } from "@/types/offer";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-type Props = {
-  params: { id: string;  locale: string; };
-};
-export default async function OfferDetailPage({ params }: Props) {
-  const resolvedParams = await params;
+
+export default async function OfferDetailPage({ params }: any) {
   
-  const offerId = resolvedParams.id;
-const locale=resolvedParams.locale;
+    const { id: offerId, locale } = params;
+
   const offer = await getOfferById(offerId);
 
   if (!offer) {

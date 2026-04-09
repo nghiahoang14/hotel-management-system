@@ -23,7 +23,10 @@ const emptyForm = {
   size: "",
   bed: "",
   view: "",
-  people: "",
+ 
+  maxPeople: "",
+  maxAdults: "",
+  maxChildren: "",
 };
 
 type Errors = Partial<typeof emptyForm>;
@@ -41,7 +44,9 @@ export const RoomTypeModal = ({
   const [errors, setErrors] = useState<Errors>({});
   const [amenities, setAmenities] = useState<string[]>([]);
   const [amenityInput, setAmenityInput] = useState("");
-
+const hasTotal = Number(form.maxPeople) > 0;
+const hasSeparate =
+  Number(form.maxAdults) > 0 || Number(form.maxChildren) > 0;"";
   const clearError = (field: keyof typeof form) => {
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: undefined }));
@@ -59,7 +64,9 @@ export const RoomTypeModal = ({
         size: initialData.size,
         bed: initialData.bed,
         view: initialData.view,
-        people: initialData.people,
+        maxPeople: String(initialData.maxPeople || ""),
+        maxAdults: String(initialData.maxAdults ?? ""),
+        maxChildren: String(initialData.maxChildren ?? ""),
       });
       setAmenities(initialData.amenities || []);
       setOldImages(initialData.images || []);
@@ -81,9 +88,7 @@ export const RoomTypeModal = ({
       setErrors({});
 
       const formData = new FormData();
-      Object.entries(form).forEach(([k, v]) =>
-        formData.append(k, v.trim())
-      );
+      Object.entries(form).forEach(([k, v]) => formData.append(k, v.trim()));
 
       amenities.forEach((a) => formData.append("amenities[]", a));
       files.forEach((f) => formData.append("images", f));
@@ -99,7 +104,7 @@ export const RoomTypeModal = ({
 
       onSuccess();
       onClose();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       toast.error("Save room type failed");
     } finally {
@@ -110,7 +115,6 @@ export const RoomTypeModal = ({
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
       <div className="bg-[#1e1e1e] w-full max-w-4xl max-h-[90vh] rounded-xl border border-gray-700 flex flex-col relative">
-
         {/* CLOSE */}
         <button
           onClick={onClose}
@@ -145,8 +149,10 @@ export const RoomTypeModal = ({
               <input
                 className="input"
                 value={form.price}
-                onChange={(e) => {setForm({ ...form, price: e.target.value }),clearError
-                  ("price");}}
+                onChange={(e) => {
+                  (setForm({ ...form, price: e.target.value }),
+                    clearError("price"));
+                }}
               />
             </Field>
 
@@ -174,11 +180,40 @@ export const RoomTypeModal = ({
               />
             </Field>
 
-            <Field label="People">
+            <Field label="Max People">
               <input
+                type="number"
+                disabled={hasSeparate}
                 className="input"
-                value={form.people}
-                onChange={(e) => setForm({ ...form, people: e.target.value })}
+                value={form.maxPeople}
+                onChange={(e) =>
+                  setForm({ ...form, maxPeople: e.target.value,maxAdults: "",    
+        maxChildren: "" })
+                }
+              />
+            </Field>
+
+            <Field label="Max Adults (optional)">
+              <input
+                type="number"
+                disabled={hasTotal}
+                className="input"
+                value={form.maxAdults}
+                onChange={(e) =>
+                  setForm({ ...form, maxAdults: e.target.value, maxPeople: "",  })
+                }
+              />
+            </Field>
+
+            <Field label="Max Children (optional)">
+              <input
+                type="number"
+                disabled={hasTotal} 
+                className="input"
+                value={form.maxChildren}
+                onChange={(e) =>
+                  setForm({ ...form, maxChildren: e.target.value, maxPeople: "",  })
+                }
               />
             </Field>
           </div>
@@ -195,12 +230,14 @@ export const RoomTypeModal = ({
           </Field>
 
           {/* AMENITIES */}
-          <Field label="Amenities" error="errors.amenities">
+          
             <input
               className="input"
               placeholder="Type and press Enter"
               value={amenityInput}
-              onChange={(e) => {setAmenityInput(e.target.value)}}
+              onChange={(e) => {
+                setAmenityInput(e.target.value);
+              }}
               onKeyDown={(e) => {
                 if (e.key === "Enter" && amenityInput.trim()) {
                   e.preventDefault();
@@ -220,76 +257,69 @@ export const RoomTypeModal = ({
                     size={12}
                     className="cursor-pointer text-red-400"
                     onClick={() =>
-                      setAmenities((prev) =>
-                        prev.filter((_, idx) => idx !== i)
-                      )
+                      setAmenities((prev) => prev.filter((_, idx) => idx !== i))
                     }
                   />
                 </span>
               ))}
             </div>
+         
+
+          {/* IMAGES */}
+          <Field label="Images">
+            <input
+              type="file"
+              multiple
+              accept="image/*"
+              className="input"
+              onChange={(e) =>
+                setFiles((prev) => [
+                  ...prev,
+                  ...Array.from(e.target.files || []),
+                ])
+              }
+            />
+
+            <div className="flex flex-wrap gap-2 mt-3">
+              {/* OLD IMAGES */}
+              {oldImages.map((img, i) => (
+                <div key={`old-${i}`} className="relative">
+                  <img
+                    src={img}
+                    className="h-20 w-20 rounded object-cover border border-gray-600"
+                  />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setOldImages((prev) => prev.filter((_, idx) => idx !== i))
+                    }
+                    className="absolute -top-2 -right-2 bg-red-500 rounded-full w-5 h-5 flex items-center justify-center"
+                  >
+                    <X size={12} className="text-white" />
+                  </button>
+                </div>
+              ))}
+
+              {/* NEW IMAGES */}
+              {files.map((file, i) => (
+                <div key={`new-${i}`} className="relative">
+                  <img
+                    src={URL.createObjectURL(file)}
+                    className="h-20 w-20 rounded object-cover border border-gray-600"
+                  />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setFiles((prev) => prev.filter((_, idx) => idx !== i))
+                    }
+                    className="absolute -top-2 -right-2 bg-red-500 rounded-full w-5 h-5 flex items-center justify-center"
+                  >
+                    <X size={12} className="text-white" />
+                  </button>
+                </div>
+              ))}
+            </div>
           </Field>
-
-        {/* IMAGES */}
-<Field label="Images">
-  <input
-    type="file"
-    multiple
-    accept="image/*"
-    className="input"
-    onChange={(e) =>
-      setFiles((prev) => [
-        ...prev,
-        ...Array.from(e.target.files || []),
-      ])
-    }
-  />
-
-  <div className="flex flex-wrap gap-2 mt-3">
-    {/* OLD IMAGES */}
-    {oldImages.map((img, i) => (
-      <div key={`old-${i}`} className="relative">
-        <img
-          src={img}
-          className="h-20 w-20 rounded object-cover border border-gray-600"
-        />
-        <button
-          type="button"
-          onClick={() =>
-            setOldImages((prev) =>
-              prev.filter((_, idx) => idx !== i)
-            )
-          }
-          className="absolute -top-2 -right-2 bg-red-500 rounded-full w-5 h-5 flex items-center justify-center"
-        >
-          <X size={12} className="text-white" />
-        </button>
-      </div>
-    ))}
-
-    {/* NEW IMAGES */}
-    {files.map((file, i) => (
-      <div key={`new-${i}`} className="relative">
-        <img
-          src={URL.createObjectURL(file)}
-          className="h-20 w-20 rounded object-cover border border-gray-600"
-        />
-        <button
-          type="button"
-          onClick={() =>
-            setFiles((prev) =>
-              prev.filter((_, idx) => idx !== i)
-            )
-          }
-          className="absolute -top-2 -right-2 bg-red-500 rounded-full w-5 h-5 flex items-center justify-center"
-        >
-          <X size={12} className="text-white" />
-        </button>
-      </div>
-    ))}
-  </div>
-</Field>
-
         </div>
 
         {/* FOOTER */}

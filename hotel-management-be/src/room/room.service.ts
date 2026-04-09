@@ -7,7 +7,7 @@ import { InjectModel } from '@nestjs/mongoose';
 // import { Model, Types } from 'mongoose';
 import { Room } from 'src/schemas/Room.schema';
 import { CreateRoomDto } from './dtos/CreateRoom.dto';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { UpdateRoomDto } from './dtos/UpdateRoom.dto';
 
 @Injectable()
@@ -31,6 +31,7 @@ export class RoomService {
     // 2️⃣ Create
     return this.roomModel.create({
       ...dto,
+      roomType: new Types.ObjectId(dto.roomType),
       status: dto.status ?? 'available',
     });
   }
@@ -93,7 +94,7 @@ export class RoomService {
       throw new NotFoundException('Room not found');
     }
 
-    // 🔒 Check trùng roomNumber (nếu có sửa)
+    // Check trùng roomNumber
     if (dto.roomNumber && dto.roomNumber !== room.roomNumber) {
       const existed = await this.roomModel.findOne({
         roomNumber: dto.roomNumber,
@@ -105,7 +106,20 @@ export class RoomService {
       }
     }
 
-    Object.assign(room, dto);
+    // 🔥 Convert roomType nếu có update
+    if (dto.roomType) {
+      room.roomType = new Types.ObjectId(dto.roomType);
+    }
+
+    // Update các field còn lại
+    if (dto.roomNumber !== undefined) {
+      room.roomNumber = dto.roomNumber;
+    }
+
+    if (dto.status !== undefined) {
+      room.status = dto.status;
+    }
+
     return room.save();
   }
 

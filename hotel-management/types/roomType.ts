@@ -7,8 +7,10 @@ export interface RoomType {
   size:string;
   bed:string;
   view:string;
-  people:string;
+  maxPeople:number;
+  maxAdults?:number;
+  maxChildren?:number;
   amenities:string[];
   images:string[];
-
+  available?:number;
 }

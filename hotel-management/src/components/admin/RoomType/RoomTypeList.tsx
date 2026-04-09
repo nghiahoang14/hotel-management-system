@@ -21,6 +21,7 @@ import {
 } from "@/src/services/api/admin/roomType.api";
 import { RoomTypeViewModal } from "./RoomTypeViewModal";
 import { RoomTypeModal } from "./RoomTypeModal";
+import { renderPeople } from "@/src/helper/renderPeople";
 
 export const RoomTypeList = () => {
   const [roomTypes, setRoomTypes] = useState<RoomType[]>([]);
@@ -155,7 +156,10 @@ export const RoomTypeList = () => {
 
                   <td className="px-3 py-2 text-center">{rt.price}đ</td>
 
-                  <td className="px-3 py-2 text-center">{rt.people}</td>
+                  <td className="px-3 py-2 text-center">
+                    {" "}
+                  {renderPeople(rt)} 
+                  </td>
 
                   <td className="px-3 py-2 text-center">{rt.bed}</td>
 
@@ -172,7 +176,7 @@ export const RoomTypeList = () => {
 
                       {/* EDIT */}
                       <button
-                      title="Edit"
+                        title="Edit"
                         onClick={() => {
                           setEditing(rt);
                           setOpen(true);
@@ -184,7 +188,7 @@ export const RoomTypeList = () => {
 
                       {/* DELETE */}
                       <button
-                      title="Delete"
+                        title="Delete"
                         onClick={() => handleDelete(rt._id)}
                         className="text-red-500"
                       >
@@ -243,12 +247,11 @@ export const RoomTypeList = () => {
         onSuccess={fetchRoomTypes}
       />
       <RoomTypeViewModal
-      key={viewing?._id}
-  open={!!viewing}
-  data={viewing}
-  onClose={() => setViewing(null)}
-/>
-
+        key={viewing?._id}
+        open={!!viewing}
+        data={viewing}
+        onClose={() => setViewing(null)}
+      />
     </>
   );
 };

@@ -2,17 +2,17 @@ import { IsDateString } from 'class-validator';
 
 export class CreateBookingDto {
   @IsDateString()
-  checkIn: string;
+  checkIn!: string;
 
   @IsDateString()
-  checkOut: string;
+  checkOut!: string;
 
-  rooms: {
+  rooms!: {
     roomTypeId: string;
     quantity: number;
   }[];
 
-  guestInfo: {
+  guestInfo!: {
     name: string;
     email: string;
     phone: string;

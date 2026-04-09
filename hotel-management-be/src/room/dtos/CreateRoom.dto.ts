@@ -2,19 +2,20 @@ import {
   IsString,
   IsNotEmpty,
   IsOptional,
-  IsMongoId,
   IsIn,
+  IsMongoId,
 } from 'class-validator';
 
 export class CreateRoomDto {
   @IsString()
   @IsNotEmpty()
-  roomNumber: string;
+  roomNumber!: string;
 
   @IsOptional()
   @IsIn(['available', 'unavailable'])
   status?: 'available' | 'unavailable';
 
   @IsMongoId()
-  roomType: string; // ObjectId của RoomType
+  @IsNotEmpty()
+  roomType!: string;
 }
