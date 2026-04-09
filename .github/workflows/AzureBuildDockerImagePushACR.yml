@@ -12,7 +12,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    # 🔐 Login Azure Container Registry
+    #  Login Azure Container Registry
     - name: Login to ACR
       uses: azure/docker-login@v1
       with:
@@ -20,7 +20,7 @@ jobs:
         username: ${{ secrets.ACR_USERNAME }}
         password: ${{ secrets.ACR_PASSWORD }}
 
-    # 🧠 Xác định dev hay prod
+    #  Xác định dev hay prod
     - name: Set ENV TAG
       run: |
         if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
@@ -34,7 +34,7 @@ jobs:
       run: |
         IMAGE=hotelmanagementregistry123.azurecr.io/hotelmanagementbe
 
-        docker build -t $IMAGE:$ENV_TAG-${{ github.run_number }} -f hotel-management-be/Dockerfile .
+        docker build -t $IMAGE:$ENV_TAG-${{ github.run_number }} -f hotel-management-be/Dockerfile docker build -f hotel-management-be/Dockerfile hotel-management-be
         docker push $IMAGE:$ENV_TAG-${{ github.run_number }}
 
         docker tag $IMAGE:$ENV_TAG-${{ github.run_number }} $IMAGE:$ENV_TAG
@@ -45,7 +45,7 @@ jobs:
       run: |
         IMAGE=hotelmanagementregistry123.azurecr.io/hotelmanagementfe
 
-        docker build -t $IMAGE:$ENV_TAG-${{ github.run_number }} -f hotel-management/Dockerfile .
+        docker build -t $IMAGE:$ENV_TAG-${{ github.run_number }} -f hotel-management/Dockerfile hotel-management
         docker push $IMAGE:$ENV_TAG-${{ github.run_number }}
 
         docker tag $IMAGE:$ENV_TAG-${{ github.run_number }} $IMAGE:$ENV_TAG
