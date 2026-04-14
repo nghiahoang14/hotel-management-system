@@ -1,0 +1,52 @@
+name: Build & Push Images to ACR
+
+on:
+  push:
+    branches: [ "main", "dev" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    #  Login Azure Container Registry
+    - name: Login to ACR
+      uses: azure/docker-login@v1
+      with:
+        login-server: hotelmanagementregistry123.azurecr.io
+        username: ${{ secrets.ACR_USERNAME }}
+        password: ${{ secrets.ACR_PASSWORD }}
+
+    #  Xác định dev hay prod
+    - name: Set ENV TAG
+      run: |
+        if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
+          echo "ENV_TAG=prod" >> $GITHUB_ENV
+        else
+          echo "ENV_TAG=dev" >> $GITHUB_ENV
+        fi
+
+    #  BUILD & PUSH BACKEND
+    - name: Build & Push Backend
+      run: |
+        IMAGE=hotelmanagementregistry123.azurecr.io/hotelmanagementbe
+
+        docker build -t $IMAGE:$ENV_TAG-${{ github.run_number }} -f hotel-management-be/Dockerfile hotel-management-be
+        docker push $IMAGE:$ENV_TAG-${{ github.run_number }}
+
+        docker tag $IMAGE:$ENV_TAG-${{ github.run_number }} $IMAGE:$ENV_TAG
+        docker push $IMAGE:$ENV_TAG
+
+    #  BUILD & PUSH FRONTEND
+    - name: Build & Push Frontend
+      run: |
+        IMAGE=hotelmanagementregistry123.azurecr.io/hotelmanagementfe
+
+        docker build -t $IMAGE:$ENV_TAG-${{ github.run_number }} -f hotel-management/Dockerfile hotel-management
+        docker push $IMAGE:$ENV_TAG-${{ github.run_number }}
+
+        docker tag $IMAGE:$ENV_TAG-${{ github.run_number }} $IMAGE:$ENV_TAG
+        docker push $IMAGE:$ENV_TAG
