@@ -10,7 +10,10 @@ async function bootstrap() {
     origin: [
       'http://localhost:3000',
       'http://localhost:3001',
+      // dev
       'https://hotelmanagement-fe.kindglacier-ca6cc0f5.southeastasia.azurecontainerapps.io',
+      // prod
+      'https://hotel-management-fe-prod.jollysmoke-2eebac9d.southeastasia.azurecontainerapps.io',
     ],
     methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
     credentials: true,

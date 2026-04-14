@@ -45,7 +45,7 @@ jobs:
       run: |
         IMAGE=hotelmanagementregistry123.azurecr.io/hotelmanagementfe
 
-        docker build -t $IMAGE:$ENV_TAG-${{ github.run_number }} -f hotel-management/Dockerfile hotel-management
+        docker build --build-arg ENV_FILE=.env.$ENV_TAG -t $IMAGE:$ENV_TAG-${{ github.run_number }} -f hotel-management/Dockerfile hotel-management
         docker push $IMAGE:$ENV_TAG-${{ github.run_number }}
 
         docker tag $IMAGE:$ENV_TAG-${{ github.run_number }} $IMAGE:$ENV_TAG

@@ -17,20 +17,24 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    #  Xác định môi trường
-    - name: Set ENV TAG
+    # Xác định môi trường + tên container app 
+    - name: Set ENV + APP NAME 
       run: |
         if [[ "${{ github.event.workflow_run.head_branch }}" == "main" ]]; then
-          echo "ENV_TAG=prod" >> $GITHUB_ENV
-        else
-          echo "ENV_TAG=dev" >> $GITHUB_ENV
+          echo "ENV_TAG=prod" >> $GITHUB_ENV 
+          echo "FE_APP=hotelmanagement-fe-prod" >> $GITHUB_ENV 
+          echo "BE_APP=hotelmanagement-be-prod" >> $GITHUB_ENV 
+        else 
+          echo "ENV_TAG=dev" >> $GITHUB_ENV 
+          echo "FE_APP=hotelmanagement-fe" >> $GITHUB_ENV 
+          echo "BE_APP=hotelmanagement-be" >> $GITHUB_ENV 
         fi
 
     #  Deploy Backend
     - name: Deploy Backend
       run: |
         az containerapp update \
-          --name hotelmanagement-be \
+          --name $BE_APP \
           --resource-group hotel-management-rg \
           --image hotelmanagementregistry123.azurecr.io/hotelmanagementbe:$ENV_TAG
 
@@ -38,6 +42,6 @@ jobs:
     - name: Deploy Frontend
       run: |
         az containerapp update \
-          --name hotelmanagement-fe \
+          --name $FE_APP \
           --resource-group hotel-management-rg \
           --image hotelmanagementregistry123.azurecr.io/hotelmanagementfe:$ENV_TAG
