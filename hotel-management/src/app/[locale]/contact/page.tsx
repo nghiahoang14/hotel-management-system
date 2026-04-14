@@ -12,8 +12,9 @@ export default async function ContactPage() {
     <>
       {/* HEADER */}
       <Header images={["/contact-img.webp"]} autoSlide={false} />
-
+   
     <ContactSection/>
+    <h2>test dev/prod</h2>
     </>
   );
 }
