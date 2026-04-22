@@ -1,20 +1,16 @@
 import 'dotenv/config';
+import { setupTelemetry } from 'telemetry';
+setupTelemetry();
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe, BadRequestException } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const origins = process.env.CORS_ORIGINS?.split(',') || [];
 
   app.enableCors({
-    origin: [
-      'http://localhost:3000',
-      'http://localhost:3001',
-      // dev
-      'https://hotelmanagement-fe.kindglacier-ca6cc0f5.southeastasia.azurecontainerapps.io',
-      // prod
-      'https://hotel-management-fe-prod.jollysmoke-2eebac9d.southeastasia.azurecontainerapps.io',
-    ],
+    origin: origins,
     methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
     credentials: true,
   });

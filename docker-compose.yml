@@ -11,6 +11,8 @@ services:
       - "3001:3001"
     environment:
       - MONGO_URI=mongodb://admin:admin123@mongo:27017/hotel-management?authSource=admin
+      - CORS_ORIGINS=http://localhost:3000,http://localhost:3001
+      - APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=6414a1f1-eaec-4c2c-acdd-406024319603;IngestionEndpoint=https://southeastasia-1.in.applicationinsights.azure.com/;LiveEndpoint=https://southeastasia.livediagnostics.monitor.azure.com/;ApplicationId=ee39c8f5-4f5c-4807-bd6b-f20f0eaeea32
     depends_on:
       - mongo
 
@@ -22,6 +24,10 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
+    environment:
+    - NEXT_PUBLIC_API_URL=http://localhost:3001     
+    - INTERNAL_API_URL=http://backend:3001 
+    - NEXT_PUBLIC_APPINSIGHTS_CONNECTION_STRING=InstrumentationKey=6414a1f1-eaec-4c2c-acdd-406024319603;IngestionEndpoint=https://southeastasia-1.in.applicationinsights.azure.com/;LiveEndpoint=https://southeastasia.livediagnostics.monitor.azure.com/;ApplicationId=ee39c8f5-4f5c-4807-bd6b-f20f0eaeea32
     depends_on:
       - backend
 
