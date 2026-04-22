@@ -1,7 +1,7 @@
-import { User } from "@/types/user";
-import axios from "axios";
+import { api } from "@/src/lib/api";
 
-const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}/admin/users`;
+
+const API_BASE_URL = "/admin/users";
 
 // ✅ Lấy tất cả user (có phân trang + search)
 export const getAllUsers = async (params?: {
@@ -9,13 +9,13 @@ export const getAllUsers = async (params?: {
   limit?: number;
   search?: string; 
 }) => {
-  const res = await axios.get(API_BASE_URL, { params });
+  const res = await api.get(API_BASE_URL, { params });
   return res.data;
 };
 
 // ✅ Lấy chi tiết user theo ID
 export const getUserById = async (id: string) => {
-  const res = await axios.get(`${API_BASE_URL}/${id}`);
+  const res = await api.get(`${API_BASE_URL}/${id}`);
   return res.data;
 };
 
@@ -27,7 +27,7 @@ export const createUser = async (data: {
     role: string;
   isActive: boolean;
 }) => {
-  const res = await axios.post(API_BASE_URL, data);
+  const res = await api.post(API_BASE_URL, data);
   return res.data;
 };
 
@@ -38,12 +38,12 @@ export const updateUser = async (id: string, data: {
     role: string;
   isActive: boolean;
 }) => {
-  const res = await axios.patch(`${API_BASE_URL}/${id}`, data);
+  const res = await api.patch(`${API_BASE_URL}/${id}`, data);
   return res.data;
 };
 
 // ✅ Xóa user / deactivate
 export const deleteUser = async (id: string) => {
-  const res = await axios.patch(`${API_BASE_URL}/${id}/deactivate`);
+  const res = await api.patch(`${API_BASE_URL}/${id}/deactivate`);
   return res.data;
 };

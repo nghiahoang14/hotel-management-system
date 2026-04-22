@@ -1,7 +1,7 @@
 
-import axios from "axios";
+import { api } from "@/src/lib/api";
 
-const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}/messages`;
+const API_BASE_URL = "/messages";
 
 console.log("Fetching: ", API_BASE_URL);
 
@@ -11,7 +11,7 @@ export const createMessage = async (data:{
   email: string;
   message?: string;
 }) => {
-  const res = await axios.post(API_BASE_URL, data);
+  const res = await api.post(API_BASE_URL, data);
   return res.data;
 };
 
