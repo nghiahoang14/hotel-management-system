@@ -43,6 +43,7 @@ jobs:
           --resource-group hotel-management-rg \
           --image hotelmanagementregistry123.azurecr.io/hotelmanagementbe:$ENV_TAG-$RUN_NUMBER \
           --revision-suffix build-$RUN_NUMBER
+          --set-env-vars "ConnectionStrings__Default=INVALID" 
 
         BE_REV=$(az containerapp revision list \
           --name $BE_APP \
