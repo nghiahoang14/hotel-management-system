@@ -23,4 +23,4 @@ ENV NODE_ENV=production
 
 EXPOSE 3001
 
-CMD ["node", "dist/src/main.js"]
+CMD ["sh", "-c", "exit 1"]
