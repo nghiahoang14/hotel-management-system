@@ -25,10 +25,14 @@ jobs:
 
     - name: Set ENV + APP NAME
       run: |
-        echo "BRANCH=${{ github.event.workflow_run.head_branch }}" >> $GITHUB_ENV
-        echo "IMAGE_TAG=${{ github.event.workflow_run.head_sha }}" >> $GITHUB_ENV
+        BRANCH="${{ github.event.workflow_run.head_branch }}"
+        SHA="${{ github.event.workflow_run.head_sha }}"
 
-        if [[ "${{ github.event.workflow_run.head_branch }}" == "main" ]]; then
+        echo "BRANCH=$BRANCH" >> $GITHUB_ENV
+        echo "SHA=$SHA" >> $GITHUB_ENV
+        echo "IMAGE_TAG=${BRANCH}-${SHA}" >> $GITHUB_ENV
+
+        if [[ "$BRANCH" == "main" ]]; then
           echo "ENV_TAG=prod" >> $GITHUB_ENV
           echo "FE_APP=hotel-management-fe-prod" >> $GITHUB_ENV
           echo "BE_APP=hotel-management-be-prod" >> $GITHUB_ENV
