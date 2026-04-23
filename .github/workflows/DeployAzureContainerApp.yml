@@ -25,8 +25,8 @@ jobs:
 
     - name: Set ENV + APP NAME
       run: |
-        RUN_ID=${{ github.event.workflow_run.id }}
-        echo "RUN_ID=$RUN_ID" >> $GITHUB_ENV
+        echo "BRANCH=${{ github.event.workflow_run.head_branch }}" >> $GITHUB_ENV
+        echo "IMAGE_TAG=${{ github.event.workflow_run.head_sha }}" >> $GITHUB_ENV
 
         if [[ "${{ github.event.workflow_run.head_branch }}" == "main" ]]; then
           echo "ENV_TAG=prod" >> $GITHUB_ENV
@@ -37,42 +37,36 @@ jobs:
           echo "FE_APP=hotelmanagement-fe" >> $GITHUB_ENV
           echo "BE_APP=hotelmanagement-be" >> $GITHUB_ENV
         fi
-
     - name: Deploy Backend
       id: deploy_be
       run: |
-        echo "RUN_ID=$RUN_ID"   # check giá trị
-        echo "ENV_TAG=$ENV_TAG"         # check giá trị
         az containerapp update \
           --name $BE_APP \
           --resource-group hotel-management-rg \
-          --image hotelmanagementregistry123.azurecr.io/hotelmanagementbe:${ENV_TAG}-${RUN_ID} \
-          --revision-suffix build-${RUN_ID} \
-          --set-env-vars "ConnectionStrings__Default=INVALID" 
+          --image hotelmanagementregistry123.azurecr.io/hotelmanagementbe:$IMAGE_TAG \
+          --revision-suffix build-${IMAGE_TAG:0:7}
 
         BE_REV=$(az containerapp revision list \
           --name $BE_APP \
           --resource-group hotel-management-rg \
-          --query "[?contains(name,'build-${RUN_ID}')].name | [0]" -o tsv)
-        echo "be_revision=$BE_REV" >> $GITHUB_OUTPUT
+          --query "[0].name" -o tsv)
 
+        echo "be_revision=$BE_REV" >> $GITHUB_OUTPUT
     - name: Deploy Frontend
       id: deploy_fe
       run: |
-        echo "RUN_ID=$RUN_ID"   # check giá trị
-        echo "ENV_TAG=$ENV_TAG"         # check giá trị
         az containerapp update \
           --name $FE_APP \
           --resource-group hotel-management-rg \
-          --image hotelmanagementregistry123.azurecr.io/hotelmanagementfe:${ENV_TAG}-${RUN_ID} \
-          --revision-suffix build-${RUN_ID}
+          --image hotelmanagementregistry123.azurecr.io/hotelmanagementfe:$IMAGE_TAG \
+          --revision-suffix build-${IMAGE_TAG:0:7}
 
         FE_REV=$(az containerapp revision list \
           --name $FE_APP \
           --resource-group hotel-management-rg \
-          --query "[?contains(name,'build-${RUN_ID}')].name | [0]" -o tsv)
-        echo "fe_revision=$FE_REV" >> $GITHUB_OUTPUT
+          --query "[0].name" -o tsv)
 
+        echo "fe_revision=$FE_REV" >> $GITHUB_OUTPUT
     - name: Health check Backend revision
       run: |
         for i in 1 2 3 4 5; do
@@ -125,7 +119,6 @@ jobs:
           echo "FE_APP=hotelmanagement-fe" >> $GITHUB_ENV
           echo "BE_APP=hotelmanagement-be" >> $GITHUB_ENV
         fi
-
     - name: Deactivate failed BE revision
       if: ${{ needs.deploy.outputs.be_revision != '' }}
       run: |
