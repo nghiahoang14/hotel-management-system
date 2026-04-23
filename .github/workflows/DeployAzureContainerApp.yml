@@ -5,6 +5,9 @@ on:
     workflows: ["Build & Push Images to ACR"]
     types:
       - completed
+    branches:
+      - main
+      - dev 
 
 jobs:
   deploy:
