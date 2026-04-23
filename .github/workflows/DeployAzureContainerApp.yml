@@ -38,32 +38,36 @@ jobs:
     - name: Deploy Backend
       id: deploy_be
       run: |
+        echo "RUN_NUMBER=$RUN_NUMBER"   # check giá trị
+        echo "ENV_TAG=$ENV_TAG"         # check giá trị
         az containerapp update \
           --name $BE_APP \
           --resource-group hotel-management-rg \
-          --image hotelmanagementregistry123.azurecr.io/hotelmanagementbe:$ENV_TAG-$RUN_NUMBER \
-          --revision-suffix build-$RUN_NUMBER \
+          --image hotelmanagementregistry123.azurecr.io/hotelmanagementbe:${ENV_TAG}-${RUN_NUMBER} \
+          --revision-suffix build-${RUN_NUMBER} \
           --set-env-vars "ConnectionStrings__Default=INVALID" 
 
         BE_REV=$(az containerapp revision list \
           --name $BE_APP \
           --resource-group hotel-management-rg \
-          --query "[?contains(name,'build-$RUN_NUMBER')].name | [0]" -o tsv)
+          --query "[?contains(name,'build-${RUN_NUMBER}')].name | [0]" -o tsv)
         echo "be_revision=$BE_REV" >> $GITHUB_OUTPUT
 
     - name: Deploy Frontend
       id: deploy_fe
       run: |
+        echo "RUN_NUMBER=$RUN_NUMBER"   # check giá trị
+        echo "ENV_TAG=$ENV_TAG"         # check giá trị
         az containerapp update \
           --name $FE_APP \
           --resource-group hotel-management-rg \
-          --image hotelmanagementregistry123.azurecr.io/hotelmanagementfe:$ENV_TAG-$RUN_NUMBER \
-          --revision-suffix build-$RUN_NUMBER
+          --image hotelmanagementregistry123.azurecr.io/hotelmanagementfe:${ENV_TAG}-${RUN_NUMBER} \
+          --revision-suffix build-${RUN_NUMBER}
 
         FE_REV=$(az containerapp revision list \
           --name $FE_APP \
           --resource-group hotel-management-rg \
-          --query "[?contains(name,'build-$RUN_NUMBER')].name | [0]" -o tsv)
+          --query "[?contains(name,'build-${RUN_NUMBER}')].name | [0]" -o tsv)
         echo "fe_revision=$FE_REV" >> $GITHUB_OUTPUT
 
     - name: Health check Backend revision
