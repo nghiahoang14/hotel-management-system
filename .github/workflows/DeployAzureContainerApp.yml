@@ -26,11 +26,11 @@ jobs:
     - name: Set ENV + APP NAME
       run: |
         BRANCH="${{ github.event.workflow_run.head_branch }}"
-        SHA="${{ github.event.workflow_run.head_sha }}"
+        RUN_NUMBER="${{ github.event.workflow_run.run_number }}"
 
         echo "BRANCH=$BRANCH" >> $GITHUB_ENV
-        echo "SHA=$SHA" >> $GITHUB_ENV
-        echo "IMAGE_TAG=${BRANCH}-${SHA}" >> $GITHUB_ENV
+        echo "RUN_NUMBER=$RUN_NUMBER" >> $GITHUB_ENV
+        echo "IMAGE_TAG=${ENV_TAG}-${RUN_NUMBER}" >> $GITHUB_ENV
 
         if [[ "$BRANCH" == "main" ]]; then
           echo "ENV_TAG=prod" >> $GITHUB_ENV
@@ -41,6 +41,7 @@ jobs:
           echo "FE_APP=hotelmanagement-fe" >> $GITHUB_ENV
           echo "BE_APP=hotelmanagement-be" >> $GITHUB_ENV
         fi
+        echo "IMAGE_TAG=${ENV_TAG}-${RUN_NUMBER}" >> $GITHUB_ENV
     - name: Deploy Backend
       id: deploy_be
       run: |
@@ -48,12 +49,12 @@ jobs:
           --name $BE_APP \
           --resource-group hotel-management-rg \
           --image hotelmanagementregistry123.azurecr.io/hotelmanagementbe:$IMAGE_TAG \
-          --revision-suffix build-${IMAGE_TAG:0:7}
+          --revision-suffix build-$RUN_NUMBER
 
         BE_REV=$(az containerapp revision list \
           --name $BE_APP \
           --resource-group hotel-management-rg \
-          --query "[0].name" -o tsv)
+          --query "[?contains(name, 'build-$RUN_NUMBER')].name | [0]" -o tsv)
 
         echo "be_revision=$BE_REV" >> $GITHUB_OUTPUT
     - name: Deploy Frontend
@@ -63,12 +64,12 @@ jobs:
           --name $FE_APP \
           --resource-group hotel-management-rg \
           --image hotelmanagementregistry123.azurecr.io/hotelmanagementfe:$IMAGE_TAG \
-          --revision-suffix build-${IMAGE_TAG:0:7}
+          --revision-suffix build-$RUN_NUMBER
 
         FE_REV=$(az containerapp revision list \
           --name $FE_APP \
           --resource-group hotel-management-rg \
-          --query "[0].name" -o tsv)
+          --query "[?contains(name, 'build-$RUN_NUMBER')].name | [0]" -o tsv)
 
         echo "fe_revision=$FE_REV" >> $GITHUB_OUTPUT
     - name: Health check Backend revision
@@ -117,8 +118,8 @@ jobs:
     - name: Set app names
       run: |
         if [[ "${{ github.event.workflow_run.head_branch }}" == "main" ]]; then
-          echo "FE_APP=hotelmanagement-fe-prod" >> $GITHUB_ENV
-          echo "BE_APP=hotelmanagement-be-prod" >> $GITHUB_ENV
+          echo "FE_APP=hotel-management-fe-prod" >> $GITHUB_ENV
+          echo "BE_APP=hotel-management-be-prod" >> $GITHUB_ENV
         else
           echo "FE_APP=hotelmanagement-fe" >> $GITHUB_ENV
           echo "BE_APP=hotelmanagement-be" >> $GITHUB_ENV
