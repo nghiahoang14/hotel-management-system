@@ -3,6 +3,19 @@ name: Build & Push Images to ACR
 on:
   push:
     branches: [ "main", "dev" ]
+  workflow_call:        
+    inputs:
+      branch:
+        required: true
+        type: string
+      run_number:
+        required: true
+        type: string
+    secrets:
+      ACR_USERNAME:
+        required: true
+      ACR_PASSWORD:
+        required: true
 
 jobs:
   build:
@@ -12,7 +25,6 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    #  Login Azure Container Registry
     - name: Login to ACR
       uses: azure/docker-login@v1
       with:
@@ -20,33 +32,29 @@ jobs:
         username: ${{ secrets.ACR_USERNAME }}
         password: ${{ secrets.ACR_PASSWORD }}
 
-    #  Xác định dev hay prod
     - name: Set ENV TAG
       run: |
-        if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
+        BRANCH="${{ inputs.branch || github.ref_name }}"
+        if [[ "$BRANCH" == "main" ]]; then
           echo "ENV_TAG=prod" >> $GITHUB_ENV
         else
           echo "ENV_TAG=dev" >> $GITHUB_ENV
         fi
 
-    #  BUILD & PUSH BACKEND
     - name: Build & Push Backend
       run: |
+        RUN_NUM="${{ inputs.run_number || github.run_number }}"
         IMAGE=hotelmanagementregistry123.azurecr.io/hotelmanagementbe
-
-        docker build -t $IMAGE:$ENV_TAG-${{ github.run_id}} -f hotel-management-be/Dockerfile hotel-management-be
-        docker push $IMAGE:$ENV_TAG-${{ github.run_id}}
-
-        docker tag $IMAGE:$ENV_TAG-${{ github.run_id}} $IMAGE:$ENV_TAG
+        docker build -t $IMAGE:$ENV_TAG-${RUN_NUM} -f hotel-management-be/Dockerfile hotel-management-be
+        docker push $IMAGE:$ENV_TAG-${RUN_NUM}
+        docker tag $IMAGE:$ENV_TAG-${RUN_NUM} $IMAGE:$ENV_TAG
         docker push $IMAGE:$ENV_TAG
 
-    #  BUILD & PUSH FRONTEND
     - name: Build & Push Frontend
       run: |
+        RUN_NUM="${{ inputs.run_number || github.run_number }}"
         IMAGE=hotelmanagementregistry123.azurecr.io/hotelmanagementfe
-
-        docker build --build-arg ENV_FILE=.env.$ENV_TAG -t $IMAGE:$ENV_TAG-${{ github.run_id}} -f hotel-management/Dockerfile hotel-management
-        docker push $IMAGE:$ENV_TAG-${{ github.run_id}}
-
-        docker tag $IMAGE:$ENV_TAG-${{ github.run_id}} $IMAGE:$ENV_TAG
+        docker build --build-arg ENV_FILE=.env.$ENV_TAG -t $IMAGE:$ENV_TAG-${RUN_NUM} -f hotel-management/Dockerfile hotel-management
+        docker push $IMAGE:$ENV_TAG-${RUN_NUM}
+        docker tag $IMAGE:$ENV_TAG-${RUN_NUM} $IMAGE:$ENV_TAG
         docker push $IMAGE:$ENV_TAG
