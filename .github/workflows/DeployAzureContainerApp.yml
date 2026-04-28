@@ -1,18 +1,22 @@
 name: Deploy to Azure Container Apps
 
 on:
-  workflow_run:
-    workflows: ["Build & Push Images to ACR"]
-    types:
-      - completed
-    branches:
-      - main
-      - dev 
+  push:
+    branches: [ "main", "dev" ]
 
 jobs:
+  build:
+    uses: ./.github/workflows/AzureBuildDockerImagePushACR.yml   # ← gọi trực tiếp file build
+    with:
+      branch: ${{ github.ref_name }}
+      run_number: ${{ github.run_number }}
+    secrets:
+      ACR_USERNAME: ${{ secrets.ACR_USERNAME }}
+      ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}
+
   deploy:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' && (github.event.workflow_run.head_branch == 'main' || github.event.workflow_run.head_branch == 'dev') }}
+    needs: build
     outputs:
       be_revision: ${{ steps.deploy_be.outputs.be_revision }}
       fe_revision: ${{ steps.deploy_fe.outputs.fe_revision }}
@@ -25,23 +29,20 @@ jobs:
 
     - name: Set ENV + APP NAME
       run: |
-        BRANCH="${{ github.event.workflow_run.head_branch }}"
-        RUN_NUMBER="${{ github.event.workflow_run.run_number }}"
-
-        echo "BRANCH=$BRANCH" >> $GITHUB_ENV
+        BRANCH="${{ github.ref_name }}"
+        RUN_NUMBER="${{ github.run_number }}"
         echo "RUN_NUMBER=$RUN_NUMBER" >> $GITHUB_ENV
-        echo "IMAGE_TAG=${ENV_TAG}-${RUN_NUMBER}" >> $GITHUB_ENV
 
         if [[ "$BRANCH" == "main" ]]; then
-          echo "ENV_TAG=prod" >> $GITHUB_ENV
           echo "FE_APP=hotel-management-fe-prod" >> $GITHUB_ENV
           echo "BE_APP=hotel-management-be-prod" >> $GITHUB_ENV
+          echo "IMAGE_TAG=prod-${RUN_NUMBER}" >> $GITHUB_ENV
         else
-          echo "ENV_TAG=dev" >> $GITHUB_ENV
           echo "FE_APP=hotelmanagement-fe" >> $GITHUB_ENV
           echo "BE_APP=hotelmanagement-be" >> $GITHUB_ENV
+          echo "IMAGE_TAG=dev-${RUN_NUMBER}" >> $GITHUB_ENV
         fi
-        echo "IMAGE_TAG=${ENV_TAG}-${RUN_NUMBER}" >> $GITHUB_ENV
+
     - name: Deploy Backend
       id: deploy_be
       run: |
@@ -57,6 +58,7 @@ jobs:
           --query "[?contains(name, 'build-$RUN_NUMBER')].name | [0]" -o tsv)
 
         echo "be_revision=$BE_REV" >> $GITHUB_OUTPUT
+
     - name: Deploy Frontend
       id: deploy_fe
       run: |
@@ -72,7 +74,8 @@ jobs:
           --query "[?contains(name, 'build-$RUN_NUMBER')].name | [0]" -o tsv)
 
         echo "fe_revision=$FE_REV" >> $GITHUB_OUTPUT
-    - name: Health check Backend revision
+
+    - name: Health check Backend
       run: |
         for i in 1 2 3 4 5; do
           sleep 20
@@ -81,14 +84,13 @@ jobs:
             --resource-group hotel-management-rg \
             --revision ${{ steps.deploy_be.outputs.be_revision }} \
             --query "properties.healthState" -o tsv)
-
           echo "BE attempt $i: $STATE"
           if [ "$STATE" = "Healthy" ]; then exit 0; fi
         done
         echo "Backend unhealthy after 5 attempts"
         exit 1
 
-    - name: Health check Frontend revision
+    - name: Health check Frontend
       run: |
         for i in 1 2 3 4 5; do
           sleep 15
@@ -97,7 +99,6 @@ jobs:
             --resource-group hotel-management-rg \
             --revision ${{ steps.deploy_fe.outputs.fe_revision }} \
             --query "properties.healthState" -o tsv)
-
           echo "FE attempt $i: $STATE"
           if [ "$STATE" = "Healthy" ]; then exit 0; fi
         done
@@ -117,13 +118,14 @@ jobs:
 
     - name: Set app names
       run: |
-        if [[ "${{ github.event.workflow_run.head_branch }}" == "main" ]]; then
+        if [[ "${{ github.ref_name }}" == "main" ]]; then
           echo "FE_APP=hotel-management-fe-prod" >> $GITHUB_ENV
           echo "BE_APP=hotel-management-be-prod" >> $GITHUB_ENV
         else
           echo "FE_APP=hotelmanagement-fe" >> $GITHUB_ENV
           echo "BE_APP=hotelmanagement-be" >> $GITHUB_ENV
         fi
+
     - name: Deactivate failed BE revision
       if: ${{ needs.deploy.outputs.be_revision != '' }}
       run: |
@@ -131,7 +133,6 @@ jobs:
           --name $BE_APP \
           --resource-group hotel-management-rg \
           --revision ${{ needs.deploy.outputs.be_revision }}
-        echo "Rolled back BE: ${{ needs.deploy.outputs.be_revision }}"
 
     - name: Deactivate failed FE revision
       if: ${{ needs.deploy.outputs.fe_revision != '' }}
@@ -140,4 +141,3 @@ jobs:
           --name $FE_APP \
           --resource-group hotel-management-rg \
           --revision ${{ needs.deploy.outputs.fe_revision }}
-        echo "Rolled back FE: ${{ needs.deploy.outputs.fe_revision }}"
