@@ -4,7 +4,7 @@ FROM node:20-bullseye-slim AS builder
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci                    
+RUN npm install
 COPY . .
 ARG ENV_FILE
 COPY ${ENV_FILE} .env.production
@@ -18,7 +18,7 @@ WORKDIR /app
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
-RUN npm ci --omit=dev     
+COPY --from=builder /app/node_modules ./node_modules
 
 ENV NODE_ENV=production
 
