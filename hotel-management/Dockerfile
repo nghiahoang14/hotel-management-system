@@ -5,12 +5,10 @@ WORKDIR /app
 
 COPY package*.json ./
 RUN npm install
-
 COPY . .
 ARG ENV_FILE
 COPY ${ENV_FILE} .env.production
 RUN npm run build
-
 
 # Stage 2: Production
 FROM node:20-bullseye-slim AS runner
