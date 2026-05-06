@@ -18,117 +18,6 @@ on:
         required: true
 
 jobs:
-  # =========================
-  # 1. TEST FRONTEND
-  # =========================
-  test-frontend:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: "npm"
-          cache-dependency-path: hotel-management/package-lock.json
-
-      - name: Install FE deps
-        working-directory: hotel-management
-        run: npm ci
-
-      - name: Lint FE
-        working-directory: hotel-management
-        run: npm run lint --if-present
-
-      - name: Test FE
-        working-directory: hotel-management
-        run: npm test --if-present
-
-      - name: Build FE (check)
-        working-directory: hotel-management
-        run: npm run build
-
-  # =========================
-  # 2. TEST BACKEND
-  # =========================
-  test-backend:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: "npm"
-          cache-dependency-path: hotel-management-be/package-lock.json
-
-      - name: Install BE deps
-        working-directory: hotel-management-be
-        run: npm ci
-
-      - name: Lint BE
-        working-directory: hotel-management-be
-        run: npm run lint --if-present
-
-      - name: Test BE
-        working-directory: hotel-management-be
-        run: npm test --if-present
-
-  # =========================
-  # 3. BUILD & PUSH
-  # =========================
-  build:
-    needs: [test-frontend, test-backend]   # 👈 chạy sau khi cả 2 xong
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Login to ACR
-        uses: azure/docker-login@v1
-        with:
-          login-server: hotelmanagementregistry123.azurecr.io
-          username: ${{ secrets.ACR_USERNAME }}
-          password: ${{ secrets.ACR_PASSWORD }}
-
-      - name: Set ENV TAG
-        run: |
-          BRANCH="${{ inputs.branch || github.ref_name }}"
-          if [[ "$BRANCH" == "main" ]]; then
-            echo "ENV_TAG=prod" >> $GITHUB_ENV
-          else
-            echo "ENV_TAG=dev" >> $GITHUB_ENV
-          fi
-
-      # ---------- BACKEND ----------
-      - name: Build & Push Backend
-        run: |
-          RUN_NUM="${{ inputs.run_number || github.run_number }}"
-          IMAGE=hotelmanagementregistry123.azurecr.io/hotelmanagementbe
-
-          docker build -t $IMAGE:$ENV_TAG-${RUN_NUM} -f hotel-management-be/Dockerfile hotel-management-be
-          docker push $IMAGE:$ENV_TAG-${RUN_NUM}
-
-          docker tag $IMAGE:$ENV_TAG-${RUN_NUM} $IMAGE:$ENV_TAG
-          docker push $IMAGE:$ENV_TAG
-
-      # ---------- FRONTEND ----------
-      - name: Build & Push Frontend
-        run: |
-          RUN_NUM="${{ inputs.run_number || github.run_number }}"
-          IMAGE=hotelmanagementregistry123.azurecr.io/hotelmanagementfe
-
-          docker build \
-            --build-arg ENV_FILE=.env.$ENV_TAG \
-            -t $IMAGE:$ENV_TAG-${RUN_NUM} \
-            -f hotel-management/Dockerfile hotel-management
-
-          docker push $IMAGE:$ENV_TAG-${RUN_NUM}
-
-          docker tag $IMAGE:$ENV_TAG-${RUN_NUM} $IMAGE:$ENV_TAG
-          docker push $IMAGE:$ENV_TAG
   # 1. TEST 
   test:
     runs-on: ubuntu-latest
@@ -179,8 +68,8 @@ jobs:
   # =========================
   # 2. BUILD & PUSH DOCKER
   # =========================
-  build-docker:
-    needs: test   
+  build:
+    needs: test   # 👈 chỉ chạy khi test pass
     runs-on: ubuntu-latest
 
     steps:
