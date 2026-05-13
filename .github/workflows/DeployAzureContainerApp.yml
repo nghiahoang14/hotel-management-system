@@ -1,3 +1,4 @@
+
 name: Deploy to Azure Container Apps
 
 on:
@@ -6,7 +7,7 @@ on:
 
 jobs:
   build:
-    uses: ./.github/workflows/AzureBuildDockerImagePushACR.yml   # ← gọi trực tiếp file build
+    uses: ./.github/workflows/AzureBuildDockerImagePushACR.yml
     with:
       branch: ${{ github.ref_name }}
       run_number: ${{ github.run_number }}
@@ -17,6 +18,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
+
     outputs:
       be_revision: ${{ steps.deploy_be.outputs.be_revision }}
       fe_revision: ${{ steps.deploy_fe.outputs.fe_revision }}
@@ -31,6 +33,7 @@ jobs:
       run: |
         BRANCH="${{ github.ref_name }}"
         RUN_NUMBER="${{ github.run_number }}"
+
         echo "RUN_NUMBER=$RUN_NUMBER" >> $GITHUB_ENV
 
         if [[ "$BRANCH" == "main" ]]; then
@@ -42,6 +45,10 @@ jobs:
           echo "BE_APP=hotelmanagement-be" >> $GITHUB_ENV
           echo "IMAGE_TAG=dev-${RUN_NUMBER}" >> $GITHUB_ENV
         fi
+
+    # =========================
+    # DEPLOY BACKEND
+    # =========================
 
     - name: Deploy Backend
       id: deploy_be
@@ -55,9 +62,16 @@ jobs:
         BE_REV=$(az containerapp revision list \
           --name $BE_APP \
           --resource-group hotel-management-rg \
-          --query "[?contains(name, 'build-$RUN_NUMBER')].name | [0]" -o tsv)
+          --query "[?contains(name, 'build-$RUN_NUMBER')].name | [0]" \
+          -o tsv)
 
         echo "be_revision=$BE_REV" >> $GITHUB_OUTPUT
+
+        echo "Backend Revision: $BE_REV"
+
+    # =========================
+    # DEPLOY FRONTEND
+    # =========================
 
     - name: Deploy Frontend
       id: deploy_fe
@@ -71,39 +85,84 @@ jobs:
         FE_REV=$(az containerapp revision list \
           --name $FE_APP \
           --resource-group hotel-management-rg \
-          --query "[?contains(name, 'build-$RUN_NUMBER')].name | [0]" -o tsv)
+          --query "[?contains(name, 'build-$RUN_NUMBER')].name | [0]" \
+          -o tsv)
 
         echo "fe_revision=$FE_REV" >> $GITHUB_OUTPUT
+
+        echo "Frontend Revision: $FE_REV"
+
+    # =========================
+    # HEALTH CHECK BACKEND
+    # =========================
 
     - name: Health check Backend
       run: |
         for i in 1 2 3 4 5; do
           sleep 20
+
           STATE=$(az containerapp revision show \
             --name $BE_APP \
             --resource-group hotel-management-rg \
             --revision ${{ steps.deploy_be.outputs.be_revision }} \
-            --query "properties.healthState" -o tsv)
-          echo "BE attempt $i: $STATE"
-          if [ "$STATE" = "Healthy" ]; then exit 0; fi
+            --query "properties.healthState" \
+            -o tsv)
+
+          echo "Backend attempt $i: $STATE"
+
+          if [ "$STATE" = "Healthy" ]; then
+            exit 0
+          fi
         done
+
         echo "Backend unhealthy after 5 attempts"
         exit 1
+
+    # =========================
+    # HEALTH CHECK FRONTEND
+    # =========================
 
     - name: Health check Frontend
       run: |
         for i in 1 2 3 4 5; do
           sleep 15
+
           STATE=$(az containerapp revision show \
             --name $FE_APP \
             --resource-group hotel-management-rg \
             --revision ${{ steps.deploy_fe.outputs.fe_revision }} \
-            --query "properties.healthState" -o tsv)
-          echo "FE attempt $i: $STATE"
-          if [ "$STATE" = "Healthy" ]; then exit 0; fi
+            --query "properties.healthState" \
+            -o tsv)
+
+          echo "Frontend attempt $i: $STATE"
+
+          if [ "$STATE" = "Healthy" ]; then
+            exit 0
+          fi
         done
+
         echo "Frontend unhealthy after 5 attempts"
         exit 1
+
+    # =========================
+    # SWITCH TRAFFIC
+    # =========================
+
+    - name: Switch Backend traffic
+      run: |
+        az containerapp ingress traffic set \
+          --name $BE_APP \
+          --resource-group hotel-management-rg \
+          --revision-weight \
+          ${{ steps.deploy_be.outputs.be_revision }}=100
+
+    - name: Switch Frontend traffic
+      run: |
+        az containerapp ingress traffic set \
+          --name $FE_APP \
+          --resource-group hotel-management-rg \
+          --revision-weight \
+          ${{ steps.deploy_fe.outputs.fe_revision }}=100
 
   rollback:
     runs-on: ubuntu-latest
@@ -126,18 +185,61 @@ jobs:
           echo "BE_APP=hotelmanagement-be" >> $GITHUB_ENV
         fi
 
-    - name: Deactivate failed BE revision
+    # =========================
+    # ROLLBACK BACKEND
+    # =========================
+
+    - name: Rollback Backend Traffic
       if: ${{ needs.deploy.outputs.be_revision != '' }}
       run: |
+        FAILED_REV="${{ needs.deploy.outputs.be_revision }}"
+
+        PREV_REV=$(az containerapp revision list \
+          --name $BE_APP \
+          --resource-group hotel-management-rg \
+          --query "[?properties.healthState=='Healthy' && name!='$FAILED_REV'] | [-1].name" \
+          -o tsv)
+
+        echo "Rollback Backend to: $PREV_REV"
+
+        if [ -n "$PREV_REV" ]; then
+          az containerapp ingress traffic set \
+            --name $BE_APP \
+            --resource-group hotel-management-rg \
+            --revision-weight $PREV_REV=100
+        fi
+
         az containerapp revision deactivate \
           --name $BE_APP \
           --resource-group hotel-management-rg \
-          --revision ${{ needs.deploy.outputs.be_revision }}
+          --revision $FAILED_REV
 
-    - name: Deactivate failed FE revision
+    # =========================
+    # ROLLBACK FRONTEND
+    # =========================
+
+    - name: Rollback Frontend Traffic
       if: ${{ needs.deploy.outputs.fe_revision != '' }}
       run: |
+        FAILED_REV="${{ needs.deploy.outputs.fe_revision }}"
+
+        PREV_REV=$(az containerapp revision list \
+          --name $FE_APP \
+          --resource-group hotel-management-rg \
+          --query "[?properties.healthState=='Healthy' && name!='$FAILED_REV'] | [-1].name" \
+          -o tsv)
+
+        echo "Rollback Frontend to: $PREV_REV"
+
+        if [ -n "$PREV_REV" ]; then
+          az containerapp ingress traffic set \
+            --name $FE_APP \
+            --resource-group hotel-management-rg \
+            --revision-weight $PREV_REV=100
+        fi
+
         az containerapp revision deactivate \
           --name $FE_APP \
           --resource-group hotel-management-rg \
-          --revision ${{ needs.deploy.outputs.fe_revision }}
+          --revision $FAILED_REV
+
