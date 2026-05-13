@@ -56,7 +56,7 @@ jobs:
         az containerapp update \
           --name $BE_APP \
           --resource-group hotel-management-rg \
-          --image hotelmanagementregistry123.azurecr.io/hotelmanagementbe:fake-tag \
+          --image hotelmanagementregistry123.azurecr.io/hotelmanagementbe:$IMAGE_TAG \
           --revision-suffix build-$RUN_NUMBER
 
         BE_REV=$(az containerapp revision list \
