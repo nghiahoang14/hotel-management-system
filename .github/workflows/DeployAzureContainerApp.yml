@@ -79,7 +79,7 @@ jobs:
         az containerapp update \
           --name $FE_APP \
           --resource-group hotel-management-rg \
-          --image hotelmanagementregistry123.azurecr.io/hotelmanagementfe:$IMAGE_TAG \
+          --image hotelmanagementregistry123.azurecr.io/hotelmanagementfe:rollback-demo \
           --revision-suffix build-$RUN_NUMBER
 
         FE_REV=$(az containerapp revision list \
