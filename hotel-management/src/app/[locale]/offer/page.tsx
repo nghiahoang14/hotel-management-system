@@ -20,7 +20,7 @@ export default async function OfferPage({
         <>
         <Header images={["/offer-img-6.jpeg"]} autoSlide={false} title={t("title")} />
         <OfferSection/>
-        <h1>demo ci/cd</h1>
+        <h1>demo ci/cd323</h1>
         </>
     )
 }
