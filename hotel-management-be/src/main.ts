@@ -7,7 +7,7 @@ import { ValidationPipe, BadRequestException } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  throw new Error('Demo rollback');
+  // throw new Error('Demo rollback');
   const origins = process.env.CORS_ORIGINS?.split(',') || [];
 
   app.enableCors({
