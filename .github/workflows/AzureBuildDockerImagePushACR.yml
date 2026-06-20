@@ -73,6 +73,8 @@ jobs:
       - name: Login to ACR
         uses: azure/docker-login@v1
         with:
+        # test case 5: lỗi ko push dc docker img 
+        #  login-server: hotelmanagementregistry123df.azurecr.io
           login-server: hotelmanagementregistry123.azurecr.io
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}

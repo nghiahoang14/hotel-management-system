@@ -37,6 +37,9 @@ export default function Home() {
     <FollowSection/>
     <AmenitiesSection/>
     <FeedbackSection/>
+    {/* test case 2 : lỗi biên dịch FE
+    const message = "Hello, World!";
+    */}
     </>
   );
 }

@@ -17,6 +17,9 @@ WORKDIR /app
 ENV NODE_ENV=production
 COPY package*.json ./
 RUN npm ci --omit=dev && npm cache clean --force
+# test case 4: lỗi docker build fail
+# RUN invalid_command_xyz
+# 
 # Copy compiled output từ builder
 COPY --from=builder /app/dist ./dist
 

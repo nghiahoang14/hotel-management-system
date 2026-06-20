@@ -3,7 +3,7 @@
 describe('health check', () => {
   it('should return true', () => {
     expect(true).toBe(true);
-    // test unit fail
+    // test case 3:  unit test fail
     //  throw new Error("Demo unit test fail");
   });
 });
